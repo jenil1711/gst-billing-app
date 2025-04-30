@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../providers/theme_provider.dart';
+import 'products_screen.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('GST Billing App'),
         actions: [
+          IconButton(
+            icon: Icon(
+              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+            ),
+            onPressed: () {
+              ref.read(themeProvider.notifier).setTheme(
+                    themeMode == ThemeMode.dark
+                        ? ThemeMode.light
+                        : ThemeMode.dark,
+                  );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -22,37 +38,46 @@ class HomePage extends StatelessWidget {
       body: GridView.count(
         padding: const EdgeInsets.all(16),
         crossAxisCount: 2,
-        crossAxisSpacing: 16,
         mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
         children: [
-          _buildMenuCard(
+          _buildGridItem(
             context,
             'Products',
-            Icons.inventory_2_outlined,
+            Icons.inventory_2,
+            Colors.blue,
             () {
-              // TODO: Navigate to products screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductsScreen(),
+                ),
+              );
             },
           ),
-          _buildMenuCard(
+          _buildGridItem(
             context,
             'Invoices',
-            Icons.receipt_long_outlined,
+            Icons.receipt_long,
+            Colors.green,
             () {
               // TODO: Navigate to invoices screen
             },
           ),
-          _buildMenuCard(
+          _buildGridItem(
             context,
             'Customers',
-            Icons.people_outline,
+            Icons.people,
+            Colors.orange,
             () {
               // TODO: Navigate to customers screen
             },
           ),
-          _buildMenuCard(
+          _buildGridItem(
             context,
             'Reports',
-            Icons.analytics_outlined,
+            Icons.bar_chart,
+            Colors.purple,
             () {
               // TODO: Navigate to reports screen
             },
@@ -62,14 +87,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuCard(
+  Widget _buildGridItem(
     BuildContext context,
     String title,
     IconData icon,
+    Color color,
     VoidCallback onTap,
   ) {
     return Card(
-      elevation: 2,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -82,14 +108,14 @@ class HomePage extends StatelessWidget {
             Icon(
               icon,
               size: 48,
-              color: Theme.of(context).colorScheme.primary,
+              color: color,
             ),
             const SizedBox(height: 16),
             Text(
               title,
-              style: GoogleFonts.poppins(
+              style: const TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

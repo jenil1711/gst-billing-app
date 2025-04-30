@@ -8,6 +8,7 @@ import 'screens/home_page.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'providers/theme_provider.dart';
+import 'screens/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,16 +33,19 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'GST Billing App',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+      ),
       themeMode: themeMode,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const AuthWrapper(),
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignupScreen(),
-        '/home': (context) => const HomePage(),
-      },
+      home: const AuthWrapper(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
